@@ -1,9 +1,10 @@
 
-Usage:
-On csv files
-turbulence.doit_file('measured.csv','expected.csv','xx.csv')
+# Usage:
+## csv files
+
+```turbulence.doit_file('measured.csv','expected.csv','xx.csv')```
 
 
-On x,y arrays:
+## Correct arrays
 
-xfix, yfix = turbulence.correcter(x,y,x0,y0)
+```xfix, yfix = turbulence.correcter(x,y,x0,y0)```
