@@ -4,7 +4,9 @@ import numpy as np
 
 
 def getpoly(x, y, ndeg=2):
-    # get the 2d polynomial design matrix
+    """
+    Get the 2D polynomial design matrix
+    """
     N = len(x)
     polys = np.zeros((((ndeg + 1) * (ndeg + 2)) // 2 - 1, N * 2))  # []
     cnt = 0
@@ -12,6 +14,7 @@ def getpoly(x, y, ndeg=2):
         for j in range(deg + 1):
             i1, i2 = j, deg - j
             # notice the i1==0 i2==0 are there to prevent 0**(-1)
+            # these are dF/dx dF/dy of the polynomial
             polys[cnt, :N] = i1 * x**(i1 - 1 + (i1 == 0)) * y**i2
             polys[cnt, N:] = i2 * x**i1 * y**(i2 - 1 + (i2 == 0))
             cnt += 1
@@ -19,9 +22,11 @@ def getpoly(x, y, ndeg=2):
 
 
 def predictor(curx, cury, curdx, curdy, tofit, ndeg=2, polys=None):
-    #  fit the offsets by a polynomial f-n
-    # return the model predictions and
-    # the cross-validated norm
+    """
+    Fit the offsets by a polynomial f-n
+    return the model predictions and
+    the cross-validated norm
+    """
     ncv = 3
     if polys is None:
         polys = getpoly(curx, cury, ndeg=ndeg)
