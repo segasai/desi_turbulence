@@ -5,15 +5,16 @@ import numpy as np
 
 def getpoly(x, y, ndeg=2):
     # get the 2d polynomial design matrix
-    polys = []
+    N = len(x)
+    polys = np.zeros((((ndeg + 1) * (ndeg + 2)) // 2 - 1, N * 2))  # []
+    cnt = 0
     for deg in range(1, ndeg + 1):
         for j in range(deg + 1):
             i1, i2 = j, deg - j
-            polys.append(
-                np.concatenate((i1 * x**(i1 - 1 + (i1 == 0)) * y**i2,
-                                i2 * x**i1 * y**(i2 - 1 + (i2 == 0)))))
-    polys = np.array(polys)
-
+            # notice the i1==0 i2==0 are there to prevent 0**(-1)
+            polys[cnt, :N] = i1 * x**(i1 - 1 + (i1 == 0)) * y**i2
+            polys[cnt, N:] = i2 * x**i1 * y**(i2 - 1 + (i2 == 0))
+            cnt += 1
     return polys
 
 
@@ -25,7 +26,7 @@ def predictor(curx, cury, curdx, curdy, tofit, ndeg=2, polys=None):
     if polys is None:
         polys = getpoly(curx, cury, ndeg=ndeg)
     else:
-        polys = polys[:(ndeg * (ndeg + 1)) // 2 - 1]
+        polys = polys[:((ndeg + 1) * (ndeg + 2)) // 2 - 1]
     cvid = np.arange(2 * len(curx)) % ncv
     norm = 0
     dxy = np.concatenate((curdx, curdy))
@@ -114,7 +115,7 @@ def correcter(x, y, x0, y0, win=50):
 
 def doit_file(input_csv, expected_csv, output_csv, win=50):
     """
-    Parameters: 
+    Parameters:
     input_csv
     expected_csv
     output_csv
